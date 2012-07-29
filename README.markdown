@@ -1,6 +1,6 @@
 kindle-your-highlights
 ============
-It scrapes highlights from kinde.amazon.com web site.
+It scrapes highlights from kinde.amazon.com web site (https://kindle.amazon.com/your_highlights).
 
 **required gems**
 
