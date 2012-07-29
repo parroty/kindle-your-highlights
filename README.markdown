@@ -5,6 +5,7 @@ It scrapes highlights from kinde.amazon.com web site.
 **required gems**
 
 * Mechanize
+* Nokogiri
 
 **usage examples - object operation**
 
