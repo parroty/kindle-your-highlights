@@ -85,71 +85,74 @@ private
   end
 end
 
-class KindleYourHighlights::List
-  attr_accessor :books, :highlights, :highlights_hash
+class KindleYourHighlights
+  class List
+    attr_accessor :books, :highlights, :highlights_hash
 
-  def initialize(books, highlights)
-    @books = books
-    @highlights = highlights
-    @highlights_hash = get_highlights_hash
-  end
+    def initialize(books, highlights)
+      @books = books
+      @highlights = highlights
+      @highlights_hash = get_highlights_hash
+    end
 
-  def dump(file_name)
-    File.open(file_name, "w") do | f |
-      Marshal.dump(self, f)
+    def dump(file_name)
+      File.open(file_name, "w") do | f |
+        Marshal.dump(self, f)
+      end
+    end
+
+    def self.load(file_name)
+      Marshal.load(File.open(file_name))
+    end
+
+  private
+    def get_highlights_hash
+      hash = Hash.new([].freeze)
+      @highlights.each do | h |
+        hash[h.asin] += [h]
+      end
+      hash
     end
   end
 
-  def self.load(file_name)
-    Marshal.load(File.open(file_name))
-  end
+  class Book
+    attr_accessor :asin, :author, :title, :last_update
 
-private
-  def get_highlights_hash
-    hash = Hash.new([].freeze)
-    @highlights.each do | h |
-      hash[h.asin] += [h]
-    end
-    hash
-  end
-end
+    @@amazon_items = Hash.new
 
-class KindleYourHighlights::Book
-  attr_accessor :asin, :author, :title, :last_update
+    def initialize(item)
+      @asin        = item.attribute("id").value.gsub(/_[0-9]+$/, "")
+      @author      = item.xpath("span[@class='author']").text.gsub("\n", "").gsub(" by ", "").strip
+      @title       = item.xpath("span/a").text
+      @last_update = item.xpath("div[@class='lastHighlighted']").text
 
-  @@amazon_items = Hash.new
-
-  def initialize(item)
-    @asin        = item.attribute("id").value.gsub(/_[0-9]+$/, "")
-    @author      = item.xpath("span[@class='author']").text.gsub("\n", "").gsub(" by ", "").strip
-    @title       = item.xpath("span/a").text
-    @last_update = item.xpath("div[@class='lastHighlighted']").text
-
-    @@amazon_items[@asin] = {:author => author, :title => title}
-  end
-
-  def self.find(asin)
-    @@amazon_items[asin] || {:author => "", :title => ""}
-  end
-end
-
-class KindleYourHighlights::Highlight
-  attr_accessor :annotation_id, :asin, :author, :title, :content, :location, :note
-
-  @@amazon_items = Hash.new
-
-  def initialize(highlight)
-    @annotation_id = highlight.xpath("form/input[@id='annotation_id']").attribute("value").value
-    @asin          = highlight.xpath("p/span[@class='hidden asin']").text
-    @content       = highlight.xpath("span[@class='highlight']").text
-    @note          = highlight.xpath("p/span[@class='noteContent']").text
-
-    if highlight.xpath("a[@class='k4pcReadMore readMore linkOut']").attribute("href").value =~ /location=([0-9]+)$/
-      @location = $1.to_i
+      @@amazon_items[@asin] = {:author => author, :title => title}
     end
 
-    book = KindleYourHighlights::Book.find(@asin)
-    @author = book[:author]
-    @title  = book[:title]
+    def self.find(asin)
+      @@amazon_items[asin] || {:author => "", :title => ""}
+    end
+  end
+
+  class Highlight
+    attr_accessor :annotation_id, :asin, :author, :title, :content, :location, :note
+
+    @@amazon_items = Hash.new
+
+    def initialize(highlight)
+      @annotation_id = highlight.xpath("form/input[@id='annotation_id']").attribute("value").value
+      @asin          = highlight.xpath("p/span[@class='hidden asin']").text
+      @content       = highlight.xpath("span[@class='highlight']").text
+      @note          = highlight.xpath("p/span[@class='noteContent']").text
+
+      if highlight.xpath("a[@class='k4pcReadMore readMore linkOut']").attribute("href").value =~ /location=([0-9]+)$/
+        @location = $1.to_i
+      end
+
+      book = KindleYourHighlights::Book.find(@asin)
+      @author = book[:author]
+      @title  = book[:title]
+    end
   end
 end
+
