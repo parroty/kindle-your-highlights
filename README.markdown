@@ -41,10 +41,10 @@ It scrapes highlights from kinde.amazon.com web site (https://kindle.amazon.com/
 	end
 
 	# xml outputs (needs to create ./xml folder in advance)
-	KindleYourHighlights::XML.new(:list => kindle.list, :output_path => "./xml", :file_name => "out.xml").output
+	KindleYourHighlights::XML.new(:list => kindle.list, :file_name => "xml/out.xml").output
 
 	# html outputs (needs to create ./html folder in advance)
-	KindleYourHighlights::HTML.new(:list => kindle.list, :output_path => "./html", :file_name => "out.html").output
+	KindleYourHighlights::HTML.new(:list => kindle.list, :file_name => "html/out.html").output
 
 **usage examples - differential save/load**
 

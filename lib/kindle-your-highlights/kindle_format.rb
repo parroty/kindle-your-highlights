@@ -4,13 +4,12 @@ require 'ostruct'
 class KindleYourHighlights
   class KindleFormat
     def initialize(options)
-      @file_name   = options[:file_name] || "output"
-      @output_path = options[:output_path] || "."
-      @list        = options[:list] || []
+      @file_name = options[:file_name] || "output_file"
+      @list      = options[:list] || []
     end
 
     def save_as_format(str)
-      File.open([@output_path, @file_name].join("/"), "w") do | f |
+      File.open(@file_name, "w") do | f |
         f.puts str
       end
     end
@@ -57,7 +56,7 @@ class KindleYourHighlights
 
     def copy_styles
       src = File.dirname(__FILE__) + "/../template/bootstrap"
-      FileUtils.cp_r(src, @output_path)
+      FileUtils.cp_r(src, File::dirname(@file_name))
     end
   end
 end
