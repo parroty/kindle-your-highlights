@@ -7,6 +7,8 @@ Gem::Specification.new do |s|
   s.email       = 'parroty00@gmail.com'
   s.files       = ["lib/kindle-your-highlights.rb"]
   s.homepage    = 'https://github.com/parroty/kindle-your-highlights'
- 
+
   s.add_runtime_dependency 'mechanize', '>= 2.0.1'
+  s.add_runtime_dependency 'nokogiri', '>= 1.5.0'
+
 end
