@@ -29,7 +29,7 @@ def update_recent
     kindle.merge!(KindleYourHighlights::List.load(DUMP_FILE))
   end
   kindle.list.dump(DUMP_FILE)
-  
+
   html
 end
 
@@ -79,7 +79,7 @@ namespace :convert do
     html
     xml
   end
-  
+
   desc 'convert to html file type'
   task :html do
     html
