@@ -50,18 +50,6 @@ class KindleYourHighlights
     end
   end
 
-  def merge!(list)
-    list.books.each do | b |
-      @books.delete_if { |x| x.asin == b.asin }
-      @books << b
-    end
-
-    list.highlights.each do | h |
-      @highlights.delete_if { |x| x.annotation_id == h.annotation_id }
-      @highlights << h
-    end
-  end
-
   def list
     List.new(@books, @highlights)
   end
@@ -103,6 +91,21 @@ class KindleYourHighlights
 
     def self.load(file_name)
       Marshal.load(File.open(file_name))
+    end
+
+    def self.merge(left, right)
+      books      = left.books.clone
+      highlights = left.highlights.clone
+
+      right.books.each do | r_book |
+        books << r_book unless books.find { | item | item.asin == r_book.asin }
+      end
+
+      right.highlights.each do | r_highlight |
+        highlights << r_highlight unless highlights.find { | item | item.annotation_id == r_highlight.annotation_id }
+      end
+
+      List.new(books, highlights)
     end
 
   private

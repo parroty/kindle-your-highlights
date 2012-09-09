@@ -26,9 +26,11 @@ def update_recent
   kindle = init_kindle_object(:page_limit => 100, :day_limit => 31, :wait_time => 2)
 
   if File.exist?(DUMP_FILE)
-    kindle.merge!(KindleYourHighlights::List.load(DUMP_FILE))
+    org_list = KindleYourHighlights::List.load(DUMP_FILE)
+    KindleYourHighlights::List.merge(kindle.list, org_list).dump(DUMP_FILE)
+  else
+    kindle.list.dump(DUMP_FILE)
   end
-  kindle.list.dump(DUMP_FILE)
 
   html
 end
