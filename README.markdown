@@ -35,7 +35,7 @@ default task is "rake update:recent"
 	    retrieve recent 1 month data from amazon server, and store them into a local file
 
 ## Library Usage Examples
-**[object operation]**
+#### object operation
 
 	require 'kindle-your-highlights'
 
@@ -59,7 +59,7 @@ default task is "rake update:recent"
 		book.last_update             # => last update of the hightlights for the book (last annoted at)
 	end
 
-**[xml/html outputs]**
+#### xml/html outputs
 
 	require 'kindle-your-highlights'
 
@@ -74,7 +74,7 @@ default task is "rake update:recent"
 	# html outputs (needs to create ./html folder in advance)
 	KindleYourHighlights::HTML.new(:list => kindle.list, :file_name => "html/out.html").output
 
-**[differential save/load]**
+#### differential save/load
 
 	require 'kindle-your-highlights'
 
@@ -99,7 +99,7 @@ default task is "rake update:recent"
 - block : call-back function which for each page load completion
 
 ## Output Examples
-**[xml]**
+#### xml
 
 XML output example
 
@@ -120,9 +120,9 @@ XML output example
 		</book>
 	</books>
 
-**[html]**
+#### html
 
-[!htmlimage](http://cloud.github.com/downloads/parroty/kindle-highlights/kindle_highlight_html.png)
+![htmlimage](http://cloud.github.com/downloads/parroty/kindle-highlights/kindle_highlight_html.png)
 
 ## updates
 
