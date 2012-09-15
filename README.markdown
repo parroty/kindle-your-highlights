@@ -2,12 +2,40 @@ kindle-your-highlights
 ============
 It scrapes highlights from kinde.amazon.com web site (https://kindle.amazon.com/your_highlights).
 
-**required gems**
+## Required Gems
 
 * Mechanize
 * Nokogiri
 
-**usage examples - object operation**
+## Rake Command Usage
+default task is "rake update:recent"
+
+	rake convert
+	    call convert:all
+
+	rake convert:all
+	    load a local file and convert into xml/html format
+
+	rake convert:html
+	    load a local file and convert into html format
+
+	rake convert:xml
+	    load a local file and convert into xml format
+
+	rake print
+	    load a local file and print highlight data
+
+	rake update
+	    call update:recent
+
+	rake update:all
+	    retrieve all data from amazon server, and store them into a local file
+
+	rake update:recent
+	    retrieve recent 1 month data from amazon server, and store them into a local file
+
+## Library Usage Examples
+**[object operation]**
 
 	require 'kindle-your-highlights'
 
@@ -29,9 +57,9 @@ It scrapes highlights from kinde.amazon.com web site (https://kindle.amazon.com/
 		book.author                  # => author of the book
 		book.title                   # => title of the book
 		book.last_update             # => last update of the hightlights for the book (last annoted at)
-  end
+	end
 
-**usage examples - xml/html outputs**
+**[xml/html outputs]**
 
 	require 'kindle-your-highlights'
 
@@ -46,7 +74,7 @@ It scrapes highlights from kinde.amazon.com web site (https://kindle.amazon.com/
 	# html outputs (needs to create ./html folder in advance)
 	KindleYourHighlights::HTML.new(:list => kindle.list, :file_name => "html/out.html").output
 
-**usage examples - differential save/load**
+**[differential save/load]**
 
 	require 'kindle-your-highlights'
 
@@ -70,7 +98,8 @@ It scrapes highlights from kinde.amazon.com web site (https://kindle.amazon.com/
 - wait_time : specifies wait time between each page load in seconds (default is 5 seconds)
 - block : call-back function which for each page load completion
 
-**output - xml**
+## Output Examples
+**[xml]**
 
 XML output example
 
@@ -91,14 +120,14 @@ XML output example
 		</book>
 	</books>
 
-**output - html**
+**[html]**
 
 http://cloud.github.com/downloads/parroty/kindle-highlights/kindle_highlight_html.png
 
-**updates**
+## updates
 
 * Initial upload (0.1.0) 
 
-**notes**
+## notes
 
 This lib was originally from "https://github.com/speric/kindle-highlights", but I created a separate project for adding features and for changing code formats.
