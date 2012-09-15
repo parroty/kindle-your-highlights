@@ -122,7 +122,7 @@ XML output example
 
 **[html]**
 
-http://cloud.github.com/downloads/parroty/kindle-highlights/kindle_highlight_html.png
+[!htmlimage](http://cloud.github.com/downloads/parroty/kindle-highlights/kindle_highlight_html.png)
 
 ## updates
 
