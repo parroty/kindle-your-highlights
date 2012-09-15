@@ -66,7 +66,7 @@ private
   def get_next_page(page)
     ret = page.search(".//a[@id='nextBookLink']").first
     if ret and ret.attribute("href")
-      @agent.get("https://kindle.amazon.com" + ret.attribute("href").value)
+      @agent.get("https://kindle.amazon.com" + ret.attribute("href").value, [], "https://kindle.amazon.com/your_highlights")
     else
       nil
     end
