@@ -62,12 +62,12 @@ end
 task :default => :update
 
 namespace :update do
-  desc 'update recent data'
+  desc 'retrieve recent 1 month data from amazon server, and store them into a local file'
   task :recent do
     update_recent
   end
 
-  desc 'retrieve all data'
+  desc 'retrieve all data from amazon server, and store them into a local file'
   task :all do
     update_all
   end
@@ -76,18 +76,18 @@ desc 'call update:recent'
 task :update => "update:recent"
 
 namespace :convert do
-  desc 'convert to all file types'
+  desc 'load a local file and convert into xml/html format'
   task :all do
     html
     xml
   end
 
-  desc 'convert to html file type'
+  desc 'load a local file and convert into html format'
   task :html do
     html
   end
 
-  desc 'convert to xml file type'
+  desc 'load a local file and convert into xml format'
   task :xml do
     xml
   end
@@ -95,7 +95,7 @@ end
 desc 'call convert:all'
 task :convert => "convert:all"
 
-desc 'print highlight data'
+desc 'load a local file and print highlight data'
 task :print do
   print
 end
