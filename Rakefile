@@ -99,3 +99,17 @@ desc 'load a local file and print highlight data'
 task :print do
   print
 end
+
+namespace :open do
+  desc 'open html file'
+  task :html do
+    system('open', HTML_FILE) # TODO : mac only solution
+  end
+
+  desc 'open xml file'
+  task :xml do
+    system('open', XML_FILE) # TODO : mac only solution
+  end
+end
+desc 'call open:html'
+task :open => "open:html"
