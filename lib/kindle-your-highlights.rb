@@ -60,7 +60,7 @@ private
   end
 
   def collect_highlight(page)
-    page.search(".//div[@class='highlightRow yourHighlight']").map { |h| Highlight.new(h) }
+    page.search(".//div[@class='highlightRow yourHighlight']").map { |h| Highlight.new(h) }.sort_by { |h| h.location }
   end
 
   def get_next_page(page)
