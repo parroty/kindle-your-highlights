@@ -47,11 +47,17 @@ class KindleYourHighlights
     end
 
     def output
-      generate_json
+      output_json_file
       copy_files
     end
 
   private
+    def output_json_file
+      namespace = OpenStruct.new(:json_str => generate_json)
+      template = ERB.new(File.read(Template.name("data.js.erb"))).result(namespace.instance_eval { binding })
+      File.open(Template.name("js/data.js"), "w") {|f| f.puts template }
+    end
+
     def generate_json
       json = Jsonify::Builder.new(:format => :pretty)
       json.books(@list.books) do |b|
@@ -64,28 +70,25 @@ class KindleYourHighlights
           json.content a.content
         end
       end
-      namespace = OpenStruct.new(:json_str => json.compile!)
-
-      file_name = File.dirname(__FILE__) + "/../template/data.js.erb"
-      template = ERB.new(File.read(file_name)).result(namespace.instance_eval { binding })
-
-      File.open(File.dirname(__FILE__) + "/../template/js/data.js", "w") do |f|
-        f.puts template
-      end
+      json.compile!
     end
 
     def copy_files
-      file_name = File.dirname(__FILE__) + "/../template/kindle.html"
-      FileUtils.cp(file_name, @dir_name + "/" + @file_name)
+      FileUtils.cp(Template.name("kindle.html"), [@dir_name, @file_name].join("/"))
+      FileUtils.cp_r(Template.name("bootstrap"), @dir_name)
 
-      src = File.dirname(__FILE__) + "/../template/bootstrap"
-      FileUtils.cp_r(src, @dir_name)
+      mkdir(@dir_name + "/js")
+      FileUtils.cp_r(Template.name("js"), @dir_name + "/js")
+    end
 
-      src = File.dirname(__FILE__) + "/../template/js"
+    def mkdir(dir_name)
+      FileUtils.mkdir(dir_name) unless Dir.exist?(dir_name)
+    end
+  end
 
-      js_dir_name = @dir_name + "js"
-      FileUtils.mkdir(js_dir_name) unless Dir.exist?(js_dir_name)
-      FileUtils.cp_r(src, @dir_name + "/js")
+  class Template
+    def self.name(name)
+       File.dirname(__FILE__) + "/../template/" + name
     end
   end
 end
