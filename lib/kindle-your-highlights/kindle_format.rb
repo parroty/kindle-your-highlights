@@ -47,6 +47,7 @@ class KindleYourHighlights
     end
 
     def output
+      create_directory
       output_json_file
       copy_files
     end
@@ -55,7 +56,7 @@ class KindleYourHighlights
     def output_json_file
       namespace = OpenStruct.new(:json_str => generate_json)
       template = ERB.new(File.read(Template.name("data.js.erb"))).result(namespace.instance_eval { binding })
-      File.open(Template.name("js/data.js"), "w") {|f| f.puts template }
+      File.open(@dir_name + "/js/data.js", "w") {|f| f.puts template }
     end
 
     def generate_json
@@ -73,11 +74,13 @@ class KindleYourHighlights
       json.compile!
     end
 
+    def create_directory
+      mkdir(@dir_name + "/js")
+    end
+
     def copy_files
       FileUtils.cp(Template.name("kindle.html"), [@dir_name, @file_name].join("/"))
       FileUtils.cp_r(Template.name("bootstrap"), @dir_name)
-
-      mkdir(@dir_name + "/js")
       FileUtils.cp_r(Template.name("js"), @dir_name + "/js")
     end
 
