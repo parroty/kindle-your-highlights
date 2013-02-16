@@ -69,20 +69,23 @@ class KindleYourHighlights
       file_name = File.dirname(__FILE__) + "/../template/data.js.erb"
       template = ERB.new(File.read(file_name)).result(namespace.instance_eval { binding })
 
-      File.open("#{@dir_name}/data.js", "w") do |f|
+      File.open(File.dirname(__FILE__) + "/../template/js/data.js", "w") do |f|
         f.puts template
       end
     end
 
     def copy_files
       file_name = File.dirname(__FILE__) + "/../template/kindle.html"
-      FileUtils.cp(file_name, @dir_name)
+      FileUtils.cp(file_name, @dir_name + "/" + @file_name)
 
       src = File.dirname(__FILE__) + "/../template/bootstrap"
       FileUtils.cp_r(src, @dir_name)
 
-      src = File.dirname(__FILE__) + "/../template/kindle.js"
-      FileUtils.cp(src, @dir_name)
+      src = File.dirname(__FILE__) + "/../template/js"
+
+      js_dir_name = @dir_name + "js"
+      FileUtils.mkdir(js_dir_name) unless Dir.exist?(js_dir_name)
+      FileUtils.cp_r(src, @dir_name + "/js")
     end
   end
 end

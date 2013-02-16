@@ -3,7 +3,7 @@ require 'kindle-your-highlights'
 DUMP_FILE = "../out.dump"
 XML_FILE  = "../xml/out.xml"
 HTML_FILE = "../html/out.html"
-HTML_DIR  = "../html/"
+HTML_DIR  = "../html"
 
 def init_kindle_object(options)
   KindleYourHighlights.new(ENV["KINDLE_USERNAME"], ENV["KINDLE_PASSWORD"], options) do | h |
