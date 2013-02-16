@@ -1,8 +1,9 @@
 require 'kindle-your-highlights'
 
 DUMP_FILE = "../out.dump"
-HTML_FILE = "../html/out.html"
 XML_FILE  = "../xml/out.xml"
+HTML_FILE = "../html/out.html"
+HTML_DIR  = "../html/"
 
 def init_kindle_object(options)
   KindleYourHighlights.new(ENV["KINDLE_USERNAME"], ENV["KINDLE_PASSWORD"], options) do | h |
@@ -49,8 +50,8 @@ end
 
 def html
   list = KindleYourHighlights::List.load(DUMP_FILE)
-  KindleYourHighlights::HTML.new(:list => list, :file_name => HTML_FILE).output
-  puts "generated html file - #{HTML_FILE}"
+  KindleYourHighlights::HTML.new(:list => list, :dir_name => HTML_DIR, :file_name => HTML_FILE).output
+  puts "generated html directory - #{HTML_DIR}"
 end
 
 def xml

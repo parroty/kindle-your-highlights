@@ -1,0 +1,77 @@
+<html ng-app>
+<head>
+  <title>Kindle Highlights</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="http://code.jquery.com/jquery-1.7.2.min.js"> </script>
+  <script src="./bootstrap/js/bootstrap.min.js"> </script>
+
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular-resource.min.js"></script>
+
+  <script type="text/javascript" src="./data.js"></script>
+  <script type="text/javascript" src="./kindle.js"></script>
+
+  <link href="./bootstrap/css/bootstrap.css" rel="stylesheet">
+
+  <style type="text/css">
+    body { padding-top: 60px; }
+    .navbar .dropdown-menu {
+      max-height: 600px;
+      overflow: auto;
+    }
+    span.label-info {
+      margin-left: 10px;
+    }
+    code {
+      color: black;
+    }
+    td {
+      font-size: 90%;
+    }
+  </style>
+
+</head>
+<body ng-controller="KindleCtrl">
+  <div id="top"></div>
+  <div id="navbar" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="brand" href="#">Kindle Your Highlights</a>
+        <ul class="nav">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Select Books<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li ng-repeat="result in results">
+                <a href="#{{result.bookid}}">{{result.title}}</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" ng-init="load()">
+    <div class="container" ng-repeat="result in results">
+      <div id="{{ result.bookid }}"></div>
+      <br/>
+      <a href="#top">Back to Top</a>
+      <br/>
+      <h2>{{result.title}} <span class="badge">{{result.total}}</span></h2>
+      <h3><small>Last annotated on {{result.last_update}}</small></h3>
+      <table class="table table-striped table-bordered table-condensed">
+        <tr>
+          <th>Location</th>
+          <th>Content</th>
+        </tr>
+        <tr ng-repeat="article in result.articles">
+          <td>{{article.location}}</td>
+          <td>{{article.content}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

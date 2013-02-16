@@ -1,8 +1,9 @@
 require 'nokogiri'
 require 'ostruct'
+require 'jsonify'
 
 class KindleYourHighlights
-  class KindleFormat
+  class XML
     def initialize(options)
       @file_name = options[:file_name] || "output_file"
       @list      = options[:list] || []
@@ -13,9 +14,7 @@ class KindleYourHighlights
         f.puts str
       end
     end
-  end
 
-  class XML < KindleFormat
     def output
       builder = Nokogiri::XML::Builder.new do | xml |
         xml.books {
@@ -40,23 +39,50 @@ class KindleYourHighlights
     end
   end
 
-  class HTML < KindleFormat
+  class HTML
+    def initialize(options)
+      @dir_name  = options[:dir_name] || "."
+      @file_name = options[:file_name] || "out.html"
+      @list      = options[:list] || []
+    end
+
     def output
-      output_html
-      copy_styles
+      generate_json
+      copy_files
     end
 
   private
-    def output_html
-      file_name = File.dirname(__FILE__) + "/../template/kindle.html.erb"
-      namespace = OpenStruct.new(:books => @list.books, :highlights => @list.highlights_hash)
+    def generate_json
+      json = Jsonify::Builder.new(:format => :pretty)
+      json.books(@list.books) do |b|
+        json.bookid b.asin
+        json.title b.title
+        json.total @list.highlights_hash[b.asin].size
+        json.last_update b.last_update
+        json.articles(@list.highlights_hash[b.asin]) do |a|
+          json.location a.location
+          json.content a.content
+        end
+      end
+      namespace = OpenStruct.new(:json_str => json.compile!)
+
+      file_name = File.dirname(__FILE__) + "/../template/data.js.erb"
       template = ERB.new(File.read(file_name)).result(namespace.instance_eval { binding })
-      save_as_format(template)
+
+      File.open("#{@dir_name}/data.js", "w") do |f|
+        f.puts template
+      end
     end
 
-    def copy_styles
+    def copy_files
+      file_name = File.dirname(__FILE__) + "/../template/kindle.html"
+      FileUtils.cp(file_name, @dir_name)
+
       src = File.dirname(__FILE__) + "/../template/bootstrap"
-      FileUtils.cp_r(src, File::dirname(@file_name))
+      FileUtils.cp_r(src, @dir_name)
+
+      src = File.dirname(__FILE__) + "/../template/kindle.js"
+      FileUtils.cp(src, @dir_name)
     end
   end
 end
