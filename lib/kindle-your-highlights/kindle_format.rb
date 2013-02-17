@@ -81,7 +81,7 @@ class KindleYourHighlights
     def copy_files
       FileUtils.cp(Template.name("kindle.html"), [@dir_name, @file_name].join("/"))
       FileUtils.cp_r(Template.name("bootstrap"), @dir_name)
-      FileUtils.cp_r(Template.name("js"), @dir_name + "/js")
+      FileUtils.cp_r(Template.name("js"), @dir_name)
     end
 
     def mkdir(dir_name)

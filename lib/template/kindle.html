@@ -1,4 +1,4 @@
-<html ng-app>
+<html ng-app="Kindle">
 <head>
   <title>Kindle Highlights</title>
   <meta charset="utf-8">
@@ -33,6 +33,10 @@
     input[type="text"] {
       width: 300px;
       height: 25px;
+    }
+    .highlight {
+      background-color: yellow;
+      display: inline;
     }
   </style>
 
@@ -77,7 +81,7 @@
         </tr>
         <tr ng-repeat="article in result.articles">
           <td>{{article.location}}</td>
-          <td>{{article.content}}</td>
+          <td post-render>{{article.content}}</td>
         </tr>
       </table>
     </div>
