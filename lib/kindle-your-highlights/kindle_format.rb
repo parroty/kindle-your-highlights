@@ -85,13 +85,13 @@ class KindleYourHighlights
     end
 
     def mkdir(dir_name)
-      FileUtils.mkdir(dir_name) unless Dir.exist?(dir_name)
+      FileUtils.mkdir(dir_name) unless File.exist?(dir_name)
     end
   end
 
   class Template
     def self.name(name)
-       File.dirname(__FILE__) + "/../template/" + name
+       File.expand_path(File.dirname(__FILE__) + "/../template/" + name)
     end
   end
 end
