@@ -41,8 +41,8 @@ class KindleYourHighlights
 
   class HTML
     def initialize(options)
-      @dir_name  = options[:dir_name] || "."
       @file_name = options[:file_name] || "out.html"
+      @dir_name  = File.expand_path(File.dirname(@file_name))
       @list      = options[:list] || []
     end
 
@@ -79,7 +79,7 @@ class KindleYourHighlights
     end
 
     def copy_files
-      FileUtils.cp(Template.name("kindle.html"), [@dir_name, @file_name].join("/"))
+      FileUtils.cp(Template.name("kindle.html"), @file_name)
       FileUtils.cp_r(Template.name("bootstrap"), @dir_name)
       FileUtils.cp_r(Template.name("js"), @dir_name)
     end

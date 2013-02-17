@@ -2,9 +2,7 @@ require 'kindle-your-highlights'
 
 DUMP_FILE = "output/dump/out.dump"
 XML_FILE  = "output/xml/out.xml"
-HTML_DIR  = "output/html"
-HTML_FILE = "out.html"
-
+HTML_FILE = "output/html/out.html"
 
 #---- UTILITY METHODS----
 def ensure_output_path
@@ -65,8 +63,8 @@ def print
 end
 
 def convert_html
-  KindleYourHighlights::HTML.new(:list => load_file, :dir_name => HTML_DIR, :file_name => HTML_FILE).output
-  puts "generated html directory - #{HTML_DIR}"
+  KindleYourHighlights::HTML.new(:list => load_file, :file_name => HTML_FILE).output
+  puts "generated html file - #{HTML_FILE}"
 end
 
 def convert_xml
