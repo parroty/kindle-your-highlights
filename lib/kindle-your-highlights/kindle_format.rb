@@ -69,6 +69,7 @@ class KindleYourHighlights
         json.articles(@list.highlights_hash[b.asin]) do |a|
           json.location a.location
           json.content a.content
+          json.note a.note
         end
       end
       json.compile!

@@ -73,7 +73,7 @@
       <a href="#top">Back to Top</a>
       <br/>
       <h2>{{result.title}} <span class="badge">{{result.articles.length}}</span></h2>
-      <h3><small>Last annotated on {{result.last_update}}</small></h3>
+      <h3><small>{{result.last_update}}</small></h3>
       <table class="table table-striped table-bordered table-condensed">
         <tr>
           <th>Location</th>
@@ -81,7 +81,10 @@
         </tr>
         <tr ng-repeat="article in result.articles">
           <td>{{article.location}}</td>
-          <td post-render>{{article.content}}</td>
+          <td>
+            <div post-render>{{article.content}}</div>
+            <div ng-show="article.note.length"><span class="label label-info">Note</span><code>{{article.note}}</code></div>
+          </td>
         </tr>
       </table>
     </div>
