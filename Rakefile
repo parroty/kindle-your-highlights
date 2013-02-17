@@ -1,9 +1,17 @@
 require 'kindle-your-highlights'
 
-DUMP_FILE = "../out.dump"
-XML_FILE  = "../xml/out.xml"
-HTML_FILE = "../html/out.html"
-HTML_DIR  = "../html"
+DUMP_FILE = "output/dump/out.dump"
+XML_FILE  = "output/xml/out.xml"
+HTML_DIR  = "output/html"
+HTML_FILE = "out.html"
+
+
+#---- UTILITY METHODS----
+def ensure_output_path
+  [DUMP_FILE, XML_FILE, HTML_FILE].each do |file|
+    FileUtils.mkpath(File.dirname(file))
+  end
+end
 
 def init_kindle_object(options)
   KindleYourHighlights.new(ENV["KINDLE_USERNAME"], ENV["KINDLE_PASSWORD"], options) do | h |
@@ -23,43 +31,51 @@ def print_kindle_object(kindle_list)
   end
 end
 
+def load_file
+  list = KindleYourHighlights::List.load(DUMP_FILE)
+end
+
+def update_common(options)
+  ensure_output_path
+  kindle_list = yield init_kindle_object(options)
+  kindle_list.dump(DUMP_FILE)
+  convert_html
+end
+
+
+#----TASK ENTRY POINTS----
 def update_recent
-  kindle = init_kindle_object(:page_limit => 100, :day_limit => 31, :wait_time => 2)
-
-  if File.exist?(DUMP_FILE)
-    org_list = KindleYourHighlights::List.load(DUMP_FILE)
-    KindleYourHighlights::List.merge(kindle.list, org_list).dump(DUMP_FILE)
-  else
-    kindle.list.dump(DUMP_FILE)
+  update_common(:page_limit => 100, :day_limit => 31, :wait_time => 2) do |kindle|
+    if File.exist?(DUMP_FILE)
+      KindleYourHighlights::List.merge(kindle.list, KindleYourHighlights::List.load(DUMP_FILE))
+    else
+      kindle.list
+    end
   end
-
-  html
 end
 
 def update_all
-  kindle = init_kindle_object(:page_limit => 100, :wait_time => 2)
-  kindle.list.dump(DUMP_FILE)
-
-  html
+  update_common(:page_limit => 100, :wait_time => 2) do |kindle|
+    kindle.list
+  end
 end
 
 def print
-  list = KindleYourHighlights::List.load(DUMP_FILE)
-  print_kindle_object(list)
+  print_kindle_object(load_file)
 end
 
-def html
-  list = KindleYourHighlights::List.load(DUMP_FILE)
-  KindleYourHighlights::HTML.new(:list => list, :dir_name => HTML_DIR, :file_name => HTML_FILE).output
+def convert_html
+  KindleYourHighlights::HTML.new(:list => load_file, :dir_name => HTML_DIR, :file_name => HTML_FILE).output
   puts "generated html directory - #{HTML_DIR}"
 end
 
-def xml
-  list = KindleYourHighlights::List.load(DUMP_FILE)
-  KindleYourHighlights::XML.new(:list => list, :file_name => XML_FILE).output
+def convert_xml
+  KindleYourHighlights::XML.new(:list => load_file, :file_name => XML_FILE).output
   puts "generated xml file - #{XML_FILE}"
 end
 
+
+#----RAKE TASKS----
 task :default => :update
 
 namespace :update do
@@ -79,18 +95,18 @@ task :update => "update:recent"
 namespace :convert do
   desc 'load a local file and convert into xml/html format'
   task :all do
-    html
-    xml
+    convert_html
+    convert_xml
   end
 
   desc 'load a local file and convert into html format'
   task :html do
-    html
+    convert_html
   end
 
   desc 'load a local file and convert into xml format'
   task :xml do
-    xml
+    convert_xml
   end
 end
 desc 'call convert:all'

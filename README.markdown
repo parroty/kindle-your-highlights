@@ -127,8 +127,11 @@ XML output example
 
 ## updates
 
-* Adding client-side features for HTML output (0.2.0)
-* Initial upload (0.1.0)
+* 0.2.0
+ * Adding client-side features for HTML output
+ * Change output directory in Rakefile (e.g. ../html -> output/html)
+* 0.1.0
+ * Initial upload
 
 ## notes
 
