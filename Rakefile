@@ -30,7 +30,7 @@ def print_kindle_object(kindle_list)
 end
 
 def load_file
-  list = KindleYourHighlights::List.load(DUMP_FILE)
+  KindleYourHighlights::List.load(DUMP_FILE)
 end
 
 def update_common(options)
@@ -45,7 +45,7 @@ end
 def update_recent
   update_common(:page_limit => 100, :day_limit => 31, :wait_time => 2) do |kindle|
     if File.exist?(DUMP_FILE)
-      KindleYourHighlights::List.merge(kindle.list, KindleYourHighlights::List.load(DUMP_FILE))
+      KindleYourHighlights::List.merge(kindle.list, load_file)
     else
       kindle.list
     end
