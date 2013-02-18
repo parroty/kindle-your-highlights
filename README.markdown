@@ -123,12 +123,12 @@ XML output example
 
 #### html
 
-![htmlimage](http://cloud.github.com/downloads/parroty/kindle-highlights/kindle_highlight_html.png)
+![htmlimage](http://parroty00.files.wordpress.com/2013/02/kindle_your_highlights_20120219.png)
 
 ## updates
 
 * 0.2.0
- * Adding client-side features for HTML output
+ * Adding client-side features for HTML output (searching, highlighting)
  * Change output directory in Rakefile (e.g. ../html -> output/html)
 * 0.1.0
  * Initial upload
