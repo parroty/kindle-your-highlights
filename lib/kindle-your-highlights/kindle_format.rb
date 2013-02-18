@@ -61,6 +61,10 @@ class KindleYourHighlights
 
     def generate_json
       json = Jsonify::Builder.new(:format => :pretty)
+      json.info do
+        json.total_books @list.books.length
+        json.total_articles @list.highlights.length
+      end
       json.books(@list.books) do |b|
         json.bookid b.asin
         json.title b.title

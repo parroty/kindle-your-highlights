@@ -16,7 +16,9 @@
   <link href="./bootstrap/css/bootstrap.css" rel="stylesheet">
 
   <style type="text/css">
-    body { padding-top: 60px; }
+    body {
+      padding-top: 60px;
+    }
     .navbar .dropdown-menu {
       max-height: 600px;
       overflow: auto;
@@ -27,9 +29,6 @@
     code {
       color: black;
     }
-    td {
-      font-size: 90%;
-    }
     input[type="text"] {
       width: 300px;
       height: 25px;
@@ -37,6 +36,13 @@
     .highlight {
       background-color: yellow;
       display: inline;
+    }
+    .info_header {
+      font-size: 105%;
+      display: inline;
+    }
+    .info_header > .badge {
+      font-size: 105%;
     }
   </style>
 
@@ -51,8 +57,8 @@
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Select Books<b class="caret"></b></a>
             <ul class="dropdown-menu">
-              <li ng-repeat="result in results">
-                <a href="#{{result.bookid}}">{{result.title}}</a>
+              <li ng-repeat="book in books">
+                <a href="#{{book.bookid}}">{{book.title}}</a>
               </li>
             </ul>
           </li>
@@ -65,21 +71,29 @@
     <form class="form-inline" ng-submit="doSearch()">
       <input type="text" ng-model="searchTerm" autofocus />
       <button class="btn btn-small btn-primary" type="submit">Search</button>
+      <div class="info_header" ng-show="book_count == total_books">
+        <span class="badge">{{total_books}}</span> books and
+        <span class="badge">{{total_articles}}</span> highlights
+      </div>
+      <div class="info_header" ng-show="book_count != total_books">
+        <span class="badge">{{book_count}}/{{total_books}}</span> books and
+        <span class="badge">{{article_count}}/{{total_articles}}</span> highlights
+      </div>
     </form>
 
-    <div class="container" ng-repeat="result in results">
-      <div id="{{ result.bookid }}"></div>
+    <div class="container" ng-repeat="book in books">
+      <div id="{{book.bookid}}"></div>
       <br/>
       <a href="#top">Back to Top</a>
       <br/>
-      <h2>{{result.title}} <span class="badge">{{result.articles.length}}</span></h2>
-      <h3><small>{{result.last_update}}</small></h3>
+      <h2>{{book.title}} <span class="badge">{{book.articles.length}}</span></h2>
+      <h3><small>{{book.last_update}}</small></h3>
       <table class="table table-striped table-bordered table-condensed">
         <tr>
           <th>Location</th>
           <th>Content</th>
         </tr>
-        <tr ng-repeat="article in result.articles">
+        <tr ng-repeat="article in book.articles">
           <td>{{article.location}}</td>
           <td>
             <div post-render>{{article.content}}</div>
