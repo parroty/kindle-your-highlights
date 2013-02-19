@@ -94,16 +94,16 @@ class KindleYourHighlights
       Marshal.load(File.open(file_name))
     end
 
-    def self.merge(left, right)
-      books      = left.books.clone
-      highlights = left.highlights.clone
+    def self.merge(base, append)
+      books      = base.books.clone
+      highlights = base.highlights.clone
 
-      right.books.each do | r_book |
-        books << r_book unless books.find { | item | item.asin == r_book.asin }
+      append.books.each do | b |
+        books << b unless books.find { | item | item.asin == b.asin }
       end
 
-      right.highlights.each do | r_highlight |
-        highlights << r_highlight unless highlights.find { | item | item.annotation_id == r_highlight.annotation_id }
+      append.highlights.each do | h |
+        highlights << h unless highlights.find { | item | item.annotation_id == h.annotation_id }
       end
 
       List.new(books, highlights)
