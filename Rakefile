@@ -29,7 +29,7 @@ def print_kindle_object(kindle_list)
   end
 end
 
-def load_file
+def load_saved_list
   KindleYourHighlights::List.load(DUMP_FILE)
 end
 
@@ -42,10 +42,21 @@ end
 
 
 #----TASK ENTRY POINTS----
+def update_new
+  saved_list = load_saved_list
+  update_common(:page_limit => 100, :stop_date => saved_list.last_update, :wait_time => 2) do |kindle|
+    if File.exist?(DUMP_FILE)
+      KindleYourHighlights::List.merge(kindle.list, saved_list)
+    else
+      kindle.list
+    end
+  end
+end
+
 def update_recent
   update_common(:page_limit => 100, :day_limit => 31, :wait_time => 2) do |kindle|
     if File.exist?(DUMP_FILE)
-      KindleYourHighlights::List.merge(kindle.list, load_file)
+      KindleYourHighlights::List.merge(kindle.list, load_saved_list)
     else
       kindle.list
     end
@@ -59,16 +70,16 @@ def update_all
 end
 
 def print
-  print_kindle_object(load_file)
+  print_kindle_object(load_saved_list)
 end
 
 def convert_html
-  KindleYourHighlights::HTML.new(:list => load_file, :file_name => HTML_FILE).output
+  KindleYourHighlights::HTML.new(:list => load_saved_list, :file_name => HTML_FILE).output
   puts "generated html file - #{HTML_FILE}"
 end
 
 def convert_xml
-  KindleYourHighlights::XML.new(:list => load_file, :file_name => XML_FILE).output
+  KindleYourHighlights::XML.new(:list => load_saved_list, :file_name => XML_FILE).output
   puts "generated xml file - #{XML_FILE}"
 end
 
@@ -77,6 +88,11 @@ end
 task :default => :update
 
 namespace :update do
+  desc 'retrieve only newly arrived items from amazon server, and store them into a local file'
+  task :new do
+    update_new
+  end
+
   desc 'retrieve recent 1 month data from amazon server, and store them into a local file'
   task :recent do
     update_recent

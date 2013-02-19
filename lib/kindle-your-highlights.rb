@@ -8,9 +8,11 @@ require 'kindle-your-highlights/kindle_format'
 class KindleYourHighlights
   attr_accessor :highlights, :books
 
-  DEFAULT_PAGE_LIMIT = 1
-  DEFAULT_DAY_LIMIT  = 365 * 100  # set default as 100 years
-  DEFAULT_WAIT_TIME  = 5
+  DEFAULT_PAGE_LIMIT  = 1
+  DEFAULT_DAY_LIMIT   = 365 * 100  # set default as 100 years
+  DEFAULT_STOP_DATE   = nil  # nil means no stop date
+  DEFAULT_WAIT_TIME   = 5
+
 
   def initialize(email_address, password, options = {}, &block)
     @agent = Mechanize.new
@@ -21,9 +23,10 @@ class KindleYourHighlights
     @amazon_form.email    = email_address
     @amazon_form.password = password
 
-    @page_limit = options[:page_limit] || DEFAULT_PAGE_LIMIT
-    @day_limit  = options[:day_limit]  || DEFAULT_DAY_LIMIT
-    @wait_time  = options[:wait_time]  || DEFAULT_WAIT_TIME
+    @page_limit  = options[:page_limit]  || DEFAULT_PAGE_LIMIT
+    @day_limit   = options[:day_limit]   || DEFAULT_DAY_LIMIT
+    @wait_time   = options[:wait_time]   || DEFAULT_WAIT_TIME
+    @stop_date   = options[:stop_date]   || DEFAULT_STOP_DATE
 
     @block = block
 
@@ -42,6 +45,8 @@ class KindleYourHighlights
 
       date_diff_from_today = (Date.today - Date.parse(@books.last.last_update)).to_i
       break if date_diff_from_today > @day_limit
+
+      break if @stop_date and (Date.parse(@books.last.last_update) < @stop_date)
 
       highlights_page = get_next_page(highlights_page)
       break unless highlights_page
@@ -107,6 +112,10 @@ class KindleYourHighlights
       end
 
       List.new(books, highlights)
+    end
+
+    def last_update
+      books.map { | b | Date.parse(b.last_update) }.sort.last
     end
 
   private
