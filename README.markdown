@@ -99,6 +99,7 @@ default task is "rake update:recent"
 #### options
 - page_limit : specifies maximum number of pages (books) to be loaded
 - day_limit : specifies maximum number of days to be retrieved, based on "Last annotated on" date and today
+- stop_date : specifies the "Last annoted on" date to stop collecting more data.
 - wait_time : specifies wait time between each page load in seconds (default is 5 seconds)
 - block : call-back function which for each page load completion
 
