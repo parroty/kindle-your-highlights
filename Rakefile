@@ -29,8 +29,9 @@ def print_kindle_object(kindle_list)
   end
 end
 
-def load_saved_list
-  KindleYourHighlights::List.load(DUMP_FILE)
+$saved_list = nil
+def get_saved_list
+  $saved_list ||= KindleYourHighlights::List.load(DUMP_FILE)
 end
 
 def update_common(options)
@@ -40,27 +41,23 @@ def update_common(options)
   convert_html
 end
 
-
-#----TASK ENTRY POINTS----
-def update_new
-  saved_list = load_saved_list
-  update_common(:page_limit => 100, :stop_date => saved_list.last_update, :wait_time => 2) do |kindle|
+def update_with_merge(options)
+  update_common(options) do |kindle|
     if File.exist?(DUMP_FILE)
-      KindleYourHighlights::List.merge(kindle.list, saved_list)
+      KindleYourHighlights::List.merge(kindle.list, get_saved_list)
     else
       kindle.list
     end
   end
 end
 
+#----TASK ENTRY POINTS----
+def update_new
+  update_with_merge(:page_limit => 100, :stop_date => get_saved_list.last_update, :wait_time => 2)
+end
+
 def update_recent
-  update_common(:page_limit => 100, :day_limit => 31, :wait_time => 2) do |kindle|
-    if File.exist?(DUMP_FILE)
-      KindleYourHighlights::List.merge(kindle.list, load_saved_list)
-    else
-      kindle.list
-    end
-  end
+  update_with_merge(:page_limit => 100, :day_limit => 31, :wait_time => 2)
 end
 
 def update_all
@@ -70,16 +67,16 @@ def update_all
 end
 
 def print
-  print_kindle_object(load_saved_list)
+  print_kindle_object(get_saved_list)
 end
 
 def convert_html
-  KindleYourHighlights::HTML.new(:list => load_saved_list, :file_name => HTML_FILE).output
+  KindleYourHighlights::HTML.new(:list => get_saved_list, :file_name => HTML_FILE).output
   puts "generated html file - #{HTML_FILE}"
 end
 
 def convert_xml
-  KindleYourHighlights::XML.new(:list => load_saved_list, :file_name => XML_FILE).output
+  KindleYourHighlights::XML.new(:list => get_saved_list, :file_name => XML_FILE).output
   puts "generated xml file - #{XML_FILE}"
 end
 
