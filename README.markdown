@@ -32,6 +32,9 @@ default task is "rake update:recent"
 	rake update:all
 	    retrieve all data from amazon server, and store them into a local file
 
+	rake update:new
+	    retrieve only newly arrived items from amazon server, and store them into a local file
+
 	rake update:recent
 	    retrieve recent 1 month data from amazon server, and store them into a local file
 
