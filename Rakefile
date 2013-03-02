@@ -1,5 +1,10 @@
 require 'kindle-your-highlights'
 
+# set environment variable or replace these constants with user/password
+USERNAME  = ENV["KINDLE_USERNAME"]
+PASSWORD  = ENV["KINDLE_PASSWORD"]
+
+# set output file paths
 DUMP_FILE = "output/dump/out.dump"
 XML_FILE  = "output/xml/out.xml"
 HTML_FILE = "output/html/out.html"
@@ -12,7 +17,7 @@ def ensure_output_path
 end
 
 def init_kindle_object(options)
-  KindleYourHighlights.new(ENV["KINDLE_USERNAME"], ENV["KINDLE_PASSWORD"], options) do | h |
+  KindleYourHighlights.new(USERNAME, PASSWORD, options) do | h |
     puts "loading... [#{h.books.last.title}] - #{h.books.last.last_update}"
   end
 end
