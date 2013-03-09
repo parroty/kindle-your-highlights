@@ -8,6 +8,18 @@ It scrapes highlights from kinde.amazon.com web site (https://kindle.amazon.com/
 * Nokogiri
 * Jsonify
 
+## Usage
+
+	$ git clone git://github.com/parroty/kindle-your-highlights.git
+
+	$ cd kindle-your-highlights
+	$ bundle
+
+	$ export KINDLE_USERNAME="username"
+	$ export KINDLE_PASSWORD="password"
+
+	$ rake update:all
+
 ## Rake Command Usage
 default task is "rake update:recent"
 
