@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'kindle-your-highlights'
-  s.version     = '0.2.0'
+  s.version     = '0.3.0'
   s.summary     = "Kindle your highlights"
   s.description = "Scrape highlights from kinde.amazon.com"
   s.authors     = ["parroty"]
