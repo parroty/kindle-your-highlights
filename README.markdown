@@ -4,9 +4,15 @@ It scrapes highlights from kinde.amazon.com web site (https://kindle.amazon.com/
 
 ## Required Gems
 
-* Mechanize
-* Nokogiri
-* Jsonify
+* mechanize
+* selenium-webdriver
+* nokogiri
+* jsonify
+
+## Dependency
+
+Using Firefox as default selenium engine.
+It may be able to specify other ones by passing option[:driver_type] in the constructor.
 
 ## Usage
 
@@ -114,6 +120,7 @@ default task is "rake update:recent"
 - stop_date : specifies the "Last annoted on" date to stop collecting more data.
 - wait_time : specifies wait time between each page load in seconds (default is 5 seconds)
 - block : call-back function which for each page load completion
+- driver_type : symbol to identify the selenium driver
 
 ## Output Examples
 #### xml
@@ -143,6 +150,8 @@ XML output example
 
 ## updates
 
+* 0.3.0
+ * Change engine from Mechanize to Selenium, as it stopped working due to some unknown reasons.
 * 0.2.0
  * Adding client-side features for HTML output (searching, highlighting)
  * Change output directory in Rakefile (e.g. ../html -> output/html)
