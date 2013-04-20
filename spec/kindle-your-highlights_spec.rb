@@ -15,7 +15,7 @@ describe "KindleYourHighlights" do
 
   it "loads data from server", :vcr do
     kindle = KindleYourHighlights.new(USERNAME, PASSWORD, {:page_limit => 2, :wait_time => 2})
-    kindle.list.books.length.should <= 2
+    kindle.list.books.length.should have_at_least(1).items
   end
 
   it "saves data to file", :vcr do
@@ -26,6 +26,6 @@ describe "KindleYourHighlights" do
 
   it "loads data from file" do
     kindle = KindleYourHighlights::List.load(DUMP_FILE)
-    kindle.books.length.should <= 2
+    kindle.books.length.should have_at_least(1).items
   end
 end
