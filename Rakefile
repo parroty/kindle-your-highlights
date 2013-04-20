@@ -133,15 +133,15 @@ task :print do
 end
 
 namespace :open do
-  desc 'open html file'
+  desc 'open html file (TODO : mac only solution)'
   task :html do
-    system('open', HTML_FILE) # TODO : mac only solution
+    system('open', HTML_FILE)
   end
 
-  desc 'open xml file'
+  desc 'open xml file (TODO : mac only solution)'
   task :xml do
-    system('open', XML_FILE) # TODO : mac only solution
+    system('open', XML_FILE)
   end
 end
-desc 'call open:html'
+desc 'call open:html (TODO : mac only solution)'
 task :open => "open:html"

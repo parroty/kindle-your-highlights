@@ -41,6 +41,15 @@ default task is "rake update:recent"
 	rake convert:xml
 	    load a local file and convert into xml format
 
+	rake open
+	    call open:html (TODO : mac only solution)
+
+	rake open:html
+	    open html file (TODO : mac only solution)
+
+	rake open:xml
+	    open xml file (TODO : mac only solution)
+
 	rake print
 	    load a local file and print highlight data
 
