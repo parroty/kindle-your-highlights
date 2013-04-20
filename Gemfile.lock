@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kindle-your-highlights (0.2.0)
+    kindle-your-highlights (0.3.0)
       jsonify (>= 0.4.1)
       mechanize (>= 2.0.1)
       nokogiri (>= 1.5.0)

@@ -8,6 +8,9 @@ require 'kindle-your-highlights/kindle_format'
 class KindleYourHighlights
   attr_accessor :highlights, :books
 
+  WINDOW_WIDTH  = 320
+  WINDOW_HEIGHT = 240
+
   DEFAULT_PAGE_LIMIT  = 1
   DEFAULT_DAY_LIMIT   = 365 * 100  # set default as 100 years
   DEFAULT_STOP_DATE   = nil  # nil means no stop date
@@ -19,6 +22,8 @@ class KindleYourHighlights
     @block = block
 
     @driver = Selenium::WebDriver.for @driver_type
+    @driver.manage.window.resize_to(WINDOW_WIDTH, WINDOW_WIDTH) if [:firefox, :ie].include?(@driver_type)
+
     begin
       @driver.navigate.to("https://www.amazon.com/ap/signin?openid.return_to=https%3A%2F%2Fkindle.amazon.com%3A443%2Fauthenticate%2Flogin_callback%3Fwctx%3D%252F&pageId=amzn_kindle&openid.mode=checkid_setup&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.pape.max_auth_age=0&openid.assoc_handle=amzn_kindle&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select")
 
