@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'mechanize'
+require 'selenium-webdriver'
 require 'nokogiri'
 require 'erb'
 require 'date'
@@ -12,44 +12,54 @@ class KindleYourHighlights
   DEFAULT_DAY_LIMIT   = 365 * 100  # set default as 100 years
   DEFAULT_STOP_DATE   = nil  # nil means no stop date
   DEFAULT_WAIT_TIME   = 5
-
+  DEFAULT_DRIVER_TYPE = :firefox
 
   def initialize(email_address, password, options = {}, &block)
-    @agent = Mechanize.new
-    @agent.user_agent_alias = 'Mac Safari'
-    page = @agent.get("https://www.amazon.com/ap/signin?openid.return_to=https%3A%2F%2Fkindle.amazon.com%3A443%2Fauthenticate%2Flogin_callback%3Fwctx%3D%252F&pageId=amzn_kindle&openid.mode=checkid_setup&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.pape.max_auth_age=0&openid.assoc_handle=amzn_kindle&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select")
-    @amazon_form = page.form('signIn')
+    initialize_options(options)
+    @block = block
 
-    @amazon_form.email    = email_address
-    @amazon_form.password = password
+    @driver = Selenium::WebDriver.for @driver_type
+    begin
+      @driver.navigate.to("https://www.amazon.com/ap/signin?openid.return_to=https%3A%2F%2Fkindle.amazon.com%3A443%2Fauthenticate%2Flogin_callback%3Fwctx%3D%252F&pageId=amzn_kindle&openid.mode=checkid_setup&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.pape.max_auth_age=0&openid.assoc_handle=amzn_kindle&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select")
 
+      element_email    = @driver.find_element(:name, 'email')
+      element_password = @driver.find_element(:name, 'password')
+
+      element_email.send_keys(email_address)
+      element_password.send_keys(password)
+
+      element_email.submit
+
+      scrape_highlights
+    ensure
+      @driver.quit
+    end
+  end
+
+  def initialize_options(options)
     @page_limit  = options[:page_limit]  || DEFAULT_PAGE_LIMIT
     @day_limit   = options[:day_limit]   || DEFAULT_DAY_LIMIT
     @wait_time   = options[:wait_time]   || DEFAULT_WAIT_TIME
     @stop_date   = options[:stop_date]   || DEFAULT_STOP_DATE
-
-    @block = block
-
-    scrape_highlights
+    @driver_type = options[:driver_type] || DEFAULT_DRIVER_TYPE
   end
 
   def scrape_highlights
-    signin_submission = @agent.submit(@amazon_form)
-    highlights_page   = @agent.click(signin_submission.link_with(:text => /Your Highlights/))
+    link = @driver.find_element(:link_text, "Your Highlights")
+    link.click
 
     @books = []
     @highlights = []
     @page_limit.times do | cnt |
-      @books      += collect_book(highlights_page)
-      @highlights += collect_highlight(highlights_page)
+      @books      += collect_book
+      @highlights += collect_highlight
 
       date_diff_from_today = (Date.today - Date.parse(@books.last.last_update)).to_i
       break if date_diff_from_today > @day_limit
 
       break if @stop_date and (Date.parse(@books.last.last_update) < @stop_date)
 
-      highlights_page = get_next_page(highlights_page)
-      break unless highlights_page
+      break unless get_next_page
       sleep(@wait_time) if cnt != 0
 
       @block.call(self) if @block
@@ -61,21 +71,27 @@ class KindleYourHighlights
   end
 
 private
-  def collect_book(page)
-    page.search(".//div[@class='bookMain yourHighlightsHeader']").map { |b| Book.new(b) }
+  def collect_book
+    books = @driver.find_elements(:xpath, ".//div[@class='bookMain yourHighlightsHeader']")
+    books.map { |b| Book.new(b) }
   end
 
-  def collect_highlight(page)
-    page.search(".//div[@class='highlightRow yourHighlight']").map { |h| Highlight.new(h) }.sort_by { |h| h.location }
+  def collect_highlight
+    highlights = @driver.find_elements(:xpath, ".//div[@class='highlightRow yourHighlight']")
+    highlights.map { |h| Highlight.new(h) }.sort_by { |h| h.location }
   end
 
-  def get_next_page(page)
-    ret = page.search(".//a[@id='nextBookLink']").first
-    if ret and ret.attribute("href")
-      @agent.get("https://kindle.amazon.com" + ret.attribute("href").value, [], "https://kindle.amazon.com/your_highlights")
+  def get_next_page
+    if element = @driver.find_element(:xpath, ".//a[@id='nextBookLink']")
+      display_hidden_element(element)
+      element.click
     else
       nil
     end
+  end
+
+  def display_hidden_element(element)
+    @driver.execute_script("arguments[0].style.display='inline';", element)
   end
 end
 
@@ -134,10 +150,10 @@ class KindleYourHighlights
     @@amazon_items = Hash.new
 
     def initialize(item)
-      @asin        = item.attribute("id").value.gsub(/_[0-9]+$/, "")
-      @author      = item.xpath("span[@class='author']").text.gsub("\n", "").gsub(" by ", "").strip
-      @title       = item.xpath("span/a").text
-      @last_update = item.xpath("div[@class='lastHighlighted']").text
+      @asin        = item.attribute('id').gsub(/_[0-9]+$/, "")
+      @author      = item.find_element(:xpath, "span[@class='author']").text.gsub("\n", "").gsub("by", "").strip
+      @title       = item.find_element(:xpath, "span/a").text
+      @last_update = item.find_element(:xpath, "div[@class='lastHighlighted']").text
 
       @@amazon_items[@asin] = {:author => author, :title => title}
     end
@@ -152,13 +168,13 @@ class KindleYourHighlights
 
     @@amazon_items = Hash.new
 
-    def initialize(highlight)
-      @annotation_id = highlight.xpath("form/input[@id='annotation_id']").attribute("value").value
-      @asin          = highlight.xpath("p/span[@class='hidden asin']").text
-      @content       = highlight.xpath("span[@class='highlight']").text
-      @note          = highlight.xpath("p/span[@class='noteContent']").text
+    def initialize(item)
+      @annotation_id  = item.find_element(:xpath, "form/input[@id='annotation_id']").attribute("value")
+      @asin           = item.find_element(:xpath, "form/input[@id='asin']").attribute("value")
+      @content        = item.find_element(:xpath, "span[@class='highlight']").text
+      @note           = item.find_element(:xpath, "p/span[@class='noteContent']").text
 
-      if highlight.xpath("a[@class='k4pcReadMore readMore linkOut']").attribute("href").value =~ /location=([0-9]+)$/
+      if item.find_element(:xpath, "a[@class='k4pcReadMore readMore linkOut']").attribute("href") =~ /location=([0-9]+)$/
         @location = $1.to_i
       end
 
