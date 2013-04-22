@@ -9,23 +9,33 @@ XML_FILE  = "spec/data/out.xml"
 HTML_FILE = "spec/data/out.html"
 
 describe "KindleYourHighlights" do
-  before(:all) do
-    File.delete(DUMP_FILE) if File.exist?(DUMP_FILE)
+  describe "upto 2 books" do
+    before(:all) do
+      File.delete(DUMP_FILE) if File.exist?(DUMP_FILE)
+    end
+
+    it "loads data from server and saves them to file", :vcr do
+      kindle = KindleYourHighlights.new(USERNAME, PASSWORD, {:page_limit => 2, :wait_time => 2})
+      kindle.list.dump(DUMP_FILE)
+      kindle.list.books.length.should have_at_least(1).items
+      File.exist?(DUMP_FILE).should be_true
+    end
+
+    it "loads data from file" do
+      kindle = KindleYourHighlights::List.load(DUMP_FILE)
+      kindle.books.length.should have_at_least(1).items
+    end
   end
 
-  it "loads data from server", :vcr do
-    kindle = KindleYourHighlights.new(USERNAME, PASSWORD, {:page_limit => 2, :wait_time => 2})
-    kindle.list.books.length.should have_at_least(1).items
-  end
+  describe "all books", :slow => true do
+    before(:all) do
+      File.delete(DUMP_FILE) if File.exist?(DUMP_FILE)
+    end
 
-  it "saves data to file", :vcr do
-    kindle = KindleYourHighlights.new(USERNAME, PASSWORD, {:page_limit => 2, :wait_time => 2})
-    kindle.list.dump(DUMP_FILE)
-    File.exist?(DUMP_FILE).should be_true
-  end
-
-  it "loads data from file" do
-    kindle = KindleYourHighlights::List.load(DUMP_FILE)
-    kindle.books.length.should have_at_least(1).items
+    it "loads data from server and saves them to file" do
+      kindle = KindleYourHighlights.new(USERNAME, PASSWORD, {:page_limit => 10000, :wait_time => 2})
+      kindle.list.dump(DUMP_FILE)
+      File.exist?(DUMP_FILE).should be_true
+    end
   end
 end
