@@ -4,10 +4,9 @@ It scrapes highlights from kinde.amazon.com web site (https://kindle.amazon.com/
 
 ## Required Gems
 
-* mechanize
-* selenium-webdriver
 * nokogiri
 * jsonify
+* selenium-webdriver
 
 ## Dependency
 
