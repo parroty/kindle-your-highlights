@@ -87,10 +87,11 @@ private
   end
 
   def get_next_page
-    if element = @driver.find_element(:xpath, ".//a[@id='nextBookLink']")
+    begin
+      element = @driver.find_element(:xpath, ".//a[@id='nextBookLink']")
       display_hidden_element(element)
       element.click
-    else
+    rescue Selenium::WebDriver::Error::NoSuchElementError
       nil
     end
   end
