@@ -21,7 +21,7 @@ class KindleYourHighlights
     initialize_options(options)
     @block = block
 
-    @driver = Selenium::WebDriver.for @driver_type
+    @driver = Selenium::WebDriver.for(@driver_type)
     @driver.manage.window.resize_to(WINDOW_WIDTH, WINDOW_WIDTH) if [:firefox, :ie].include?(@driver_type)
 
     begin
@@ -55,18 +55,17 @@ class KindleYourHighlights
 
     @books = []
     @highlights = []
-    @page_limit.times do | cnt |
+    @page_limit.times do |cnt|
       @books      += collect_book
       @highlights += collect_highlight
 
       date_diff_from_today = (Date.today - Date.parse(@books.last.last_update)).to_i
       break if date_diff_from_today > @day_limit
-
       break if @stop_date and (Date.parse(@books.last.last_update) < @stop_date)
 
       break unless get_next_page
-      sleep(@wait_time) if cnt != 0
 
+      sleep(@wait_time) if cnt != 0
       @block.call(self) if @block
     end
   end
@@ -112,7 +111,7 @@ class KindleYourHighlights
     end
 
     def dump(file_name)
-      File.open(file_name, "w") do | f |
+      File.open(file_name, "w") do |f|
         Marshal.dump(self, f)
       end
     end
@@ -125,25 +124,25 @@ class KindleYourHighlights
       books      = base.books.clone
       highlights = base.highlights.clone
 
-      append.books.each do | b |
-        books << b unless books.find { | item | item.asin == b.asin }
+      append.books.each do |b|
+        books << b unless books.find { |item| item.asin == b.asin }
       end
 
-      append.highlights.each do | h |
-        highlights << h unless highlights.find { | item | item.annotation_id == h.annotation_id }
+      append.highlights.each do |h|
+        highlights << h unless highlights.find { |item| item.annotation_id == h.annotation_id }
       end
 
       List.new(books, highlights)
     end
 
     def last_update
-      books.map { | b | Date.parse(b.last_update) }.sort.last
+      books.map { |b| Date.parse(b.last_update) }.sort.last
     end
 
   private
     def get_highlights_hash
       hash = Hash.new([].freeze)
-      @highlights.each do | h |
+      @highlights.each do |h|
         hash[h.asin] += [h]
       end
       hash
