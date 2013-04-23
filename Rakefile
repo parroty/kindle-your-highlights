@@ -1,3 +1,6 @@
+lib_dir = File.expand_path File.join(File.dirname(__FILE__), "lib")
+$LOAD_PATH.unshift lib_dir unless $LOAD_PATH.include? lib_dir
+
 require 'kindle-your-highlights'
 
 # set environment variable or replace these constants with user/password
