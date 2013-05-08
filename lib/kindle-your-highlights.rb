@@ -169,7 +169,7 @@ class KindleYourHighlights
   end
 
   class Highlight
-    attr_accessor :annotation_id, :asin, :author, :title, :content, :location, :note
+    attr_accessor :annotation_id, :asin, :author, :title, :content, :location, :note, :link
 
     @@amazon_items = Hash.new
 
@@ -178,8 +178,9 @@ class KindleYourHighlights
       @asin           = item.find_element(:xpath, "form/input[@id='asin']").attribute("value")
       @content        = item.find_element(:xpath, "span[@class='highlight']").text
       @note           = item.find_element(:xpath, "p/span[@class='noteContent']").text
+      @link           = item.find_element(:xpath, "a[@class='k4pcReadMore readMore linkOut']").attribute("href")
 
-      if item.find_element(:xpath, "a[@class='k4pcReadMore readMore linkOut']").attribute("href") =~ /location=([0-9]+)$/
+      if @link =~ /location=([0-9]+)$/
         @location = $1.to_i
       end
 

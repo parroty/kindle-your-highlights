@@ -47,6 +47,10 @@
     .info_header > .badge {
       font-size: 105%;
     }
+    a.location {
+      color: #333333;
+      text-decoration: underline;
+    }
   </style>
 
 </head>
@@ -97,7 +101,12 @@
           <th>Content</th>
         </tr>
         <tr ng-repeat="article in book.articles">
-          <td>{{article.location}}</td>
+          <td>
+            <div ng-switch on="!!article.link">
+              <div ng-switch-when="true"><a class="location" href="{{article.link}}">{{article.location}}</a></div>
+              <div ng-switch-default>{{article.location}}</div>
+            </div>
+          </td>
           <td>
             <div post-render>{{article.content}}</div>
             <div ng-show="article.note.length"><span class="label label-info">Note</span><code>{{article.note}}</code></div>

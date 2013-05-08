@@ -74,6 +74,7 @@ class KindleYourHighlights
           json.location a.location
           json.content a.content
           json.note a.note
+          json.link a.link
         end
       end
       json.compile!
