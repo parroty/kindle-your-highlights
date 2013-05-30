@@ -59,9 +59,11 @@ class KindleYourHighlights
       @books      += collect_book
       @highlights += collect_highlight
 
-      date_diff_from_today = (Date.today - Date.parse(@books.last.last_update)).to_i
-      break if date_diff_from_today > @day_limit
-      break if @stop_date and (Date.parse(@books.last.last_update) < @stop_date)
+      if @books.last
+        date_diff_from_today = (Date.today - Date.parse(@books.last.last_update)).to_i
+        break if date_diff_from_today > @day_limit
+        break if @stop_date and (Date.parse(@books.last.last_update) < @stop_date)
+      end
 
       break unless get_next_page
 
