@@ -24,7 +24,9 @@ end
 
 def init_kindle_object(options)
   KindleYourHighlights.new(USERNAME, PASSWORD, options) do | h |
-    puts "loading... [#{h.books.last.title}] - #{h.books.last.last_update}"
+    if h.books.last
+      puts "loading... [#{h.books.last.title}] - #{h.books.last.last_update}"
+    end
   end
 end
 
