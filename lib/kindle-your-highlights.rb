@@ -3,6 +3,7 @@ require 'selenium-webdriver'
 require 'nokogiri'
 require 'erb'
 require 'date'
+require 'fileutils'
 require 'kindle-your-highlights/kindle_format'
 
 class KindleYourHighlights
@@ -112,7 +113,13 @@ class KindleYourHighlights
       @highlights_hash = get_highlights_hash
     end
 
-    def dump(file_name)
+    def dump(file_name, backup_counts = 0)
+      (backup_counts - 1).downto(0) do |generation|
+        from = backup_file_name(file_name, generation)
+        to   = backup_file_name(file_name, generation + 1)
+        FileUtils.copy(from, to, {:preserve => true}) if File.exist?(from)
+      end
+
       File.open(file_name, "w") do |f|
         Marshal.dump(self, f)
       end
@@ -148,6 +155,10 @@ class KindleYourHighlights
         hash[h.asin] += [h]
       end
       hash
+    end
+
+    def backup_file_name(file_name, generation)
+      generation == 0 ? file_name : "#{file_name}.#{generation}"
     end
   end
 

@@ -12,6 +12,9 @@ DUMP_FILE = "output/dump/out.dump"
 XML_FILE  = "output/xml/out.xml"
 HTML_FILE = "output/html/out.html"
 
+# save settings
+BACKUP_COUNTS = 3
+
 #---- UTILITY METHODS----
 def ensure_output_path
   [DUMP_FILE, XML_FILE, HTML_FILE].each do |file|
@@ -44,7 +47,7 @@ end
 def update_common(options)
   ensure_output_path
   kindle_list = yield init_kindle_object(options)
-  kindle_list.dump(DUMP_FILE)
+  kindle_list.dump(DUMP_FILE, BACKUP_COUNTS)
   convert_html
 end
 
