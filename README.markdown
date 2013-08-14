@@ -1,4 +1,4 @@
-kindle-your-highlights
+kindle-your-highlights [![Code Climate](https://codeclimate.com/github/parroty/kindle-your-highlights.png)](https://codeclimate.com/github/parroty/kindle-your-highlights)
 ============
 It scrapes highlights from kinde.amazon.com web site (https://kindle.amazon.com/your_highlights).
 
