@@ -60,12 +60,7 @@ class KindleYourHighlights
       @books      += collect_book
       @highlights += collect_highlight
 
-      if @books.last
-        date_diff_from_today = (Date.today - Date.parse(@books.last.last_update)).to_i
-        break if date_diff_from_today > @day_limit
-        break if @stop_date and (Date.parse(@books.last.last_update) < @stop_date)
-      end
-
+      break if exceed_date_limit?
       break unless get_next_page
 
       sleep(@wait_time) if cnt != 0
@@ -78,6 +73,18 @@ class KindleYourHighlights
   end
 
 private
+  def exceed_date_limit?
+    flag = false
+    date_diff_from_today = (Date.today - Date.parse(@books.last.last_update)).to_i
+
+    if @books.last
+      flag = true if date_diff_from_today > @day_limit
+      flag = true if @stop_date and (Date.parse(@books.last.last_update) < @stop_date)
+    end
+
+    flag
+  end
+
   def collect_book
     books = @driver.find_elements(:xpath, ".//div[@class='bookMain yourHighlightsHeader']")
     books.map { |b| Book.new(b) }
@@ -130,17 +137,8 @@ class KindleYourHighlights
     end
 
     def self.merge(base, append)
-      books      = base.books.clone
-      highlights = base.highlights.clone
-
-      append.books.each do |b|
-        books << b unless books.find { |item| item.asin == b.asin }
-      end
-
-      append.highlights.each do |h|
-        highlights << h unless highlights.find { |item| item.annotation_id == h.annotation_id }
-      end
-
+      books      = do_merge(base.books, append.books)
+      highlights = do_merge(base.highlights, append.highlights)
       List.new(books, highlights)
     end
 
@@ -149,6 +147,14 @@ class KindleYourHighlights
     end
 
   private
+    def self.do_merge(base, append)
+      current = base.clone
+      append.each do |item|
+        current << item unless current.include?(item)
+      end
+      current
+    end
+
     def get_highlights_hash
       hash = Hash.new([].freeze)
       @highlights.each do |h|
@@ -179,6 +185,10 @@ class KindleYourHighlights
     def self.find(asin)
       @@amazon_items[asin] || {:author => "", :title => ""}
     end
+
+    def == (other)
+      self.asin == other.asin
+    end
   end
 
   class Highlight
@@ -200,6 +210,10 @@ class KindleYourHighlights
       book = KindleYourHighlights::Book.find(@asin)
       @author = book[:author]
       @title  = book[:title]
+    end
+
+    def == (other)
+      self.annotation_id == other.annotation_id
     end
   end
 end
