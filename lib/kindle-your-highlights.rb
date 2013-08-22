@@ -75,9 +75,9 @@ class KindleYourHighlights
 private
   def exceed_date_limit?
     flag = false
-    date_diff_from_today = (Date.today - Date.parse(@books.last.last_update)).to_i
 
     if @books.last
+      date_diff_from_today = (Date.today - Date.parse(@books.last.last_update)).to_i
       flag = true if date_diff_from_today > @day_limit
       flag = true if @stop_date and (Date.parse(@books.last.last_update) < @stop_date)
     end
