@@ -110,7 +110,7 @@ KindleYourHighlights::HTML.new(:list => kindle.list, :file_name => "html/out.htm
 
 #### differential save/load
 
-```
+```ruby
 require 'kindle-your-highlights'
 
 # to create a new KindleHighlight object, give it your Amazon email address and password
@@ -141,22 +141,24 @@ kindle.list.dump("out.dump")
 
 XML output example
 
-	<?xml version="1.0"?>
-	<books>
-		<book>
-			<asin>ASIN</asin>
-			<title>TITLE</title>
-			<author>AUTHOR</author>
-			<highlights>
-				<annotation_id>ANNOTATION_ID1</annotation_id>
-				<content>CONTENT1</content>
-			</highlights>
-			<highlights>
-				<annotation_id>ANNOTATION_ID2</annotation_id>
-				<content>CONTENT2</content>
-			</highlights>
-		</book>
-	</books>
+```xml
+<?xml version="1.0"?>
+<books>
+	<book>
+		<asin>ASIN</asin>
+		<title>TITLE</title>
+		<author>AUTHOR</author>
+		<highlights>
+			<annotation_id>ANNOTATION_ID1</annotation_id>
+			<content>CONTENT1</content>
+		</highlights>
+		<highlights>
+			<annotation_id>ANNOTATION_ID2</annotation_id>
+			<content>CONTENT2</content>
+		</highlights>
+	</book>
+</books>
+```
 
 #### html
 
