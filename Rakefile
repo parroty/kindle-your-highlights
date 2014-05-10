@@ -112,8 +112,8 @@ namespace :update do
     update_all
   end
 end
-desc 'call update:recent'
-task :update => "update:recent"
+desc 'call update:new'
+task :update => "update:new"
 
 namespace :convert do
   desc 'load a local file and convert into xml/html format'
