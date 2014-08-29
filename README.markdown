@@ -53,7 +53,7 @@ default task is "rake update:recent"
 	    load a local file and print highlight data
 
 	rake update
-	    call update:recent
+	    call update:new
 
 	rake update:all
 	    retrieve all data from amazon server, and store them into a local file
