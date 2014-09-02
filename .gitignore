@@ -1,3 +1,4 @@
 *.gem
 output/*
 spec/data/*
+/.env
